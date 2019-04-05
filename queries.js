@@ -7,7 +7,7 @@ const pool = new Pool({
   host: '<PLACEHOLDER>',
   database: '<PLACEHOLDER>',
   password: '<PLACEHOLDER>',
-  port: <PLACEHOLDER>,
+  port: <PLACEHOLDER>
 });
 
 // GET - all users
@@ -21,7 +21,7 @@ const getUsers = (request, response) => {
       response.status(200).json(results.rows);
     }
   );
-}
+};
 
 // GET - single user by id
 const getUserById = (request, response) => {
@@ -37,7 +37,7 @@ const getUserById = (request, response) => {
       response.status(200).json(results.rows);
     }
   );
-}
+};
 
 // POST - new user
 const createUser = (request, response) => {
@@ -54,7 +54,7 @@ const createUser = (request, response) => {
         .send(`User added with ID: ${results.rows[0].id}`);
     }
   );
-}
+};
 
 // PUT - update existing user
 const updateUser = (request, response) => {
@@ -71,7 +71,7 @@ const updateUser = (request, response) => {
       response.status(200).send(`User modified with ID: ${id}`);
     }
   );
-}
+};
 
 // DELETE - remove user
 const deleteUser = (request, response) => {
@@ -87,7 +87,7 @@ const deleteUser = (request, response) => {
       response.status(200).send(`User deleted with ID: ${id}`);
     }
   );
-}
+};
 
 module.exports = {
   getUsers,
