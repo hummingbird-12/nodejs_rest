@@ -3,11 +3,11 @@
 const Pool = require('pg').Pool;
 
 const pool = new Pool({
-  user: '<PLACEHOLDER>',
-  host: '<PLACEHOLDER>',
-  database: '<PLACEHOLDER>',
-  password: '<PLACEHOLDER>',
-  port: <PLACEHOLDER>
+  user: process.env.PSQL_USER,
+  host: process.env.PSQL_HOST,
+  database: process.env.PSQL_DB,
+  password: process.env.PSQL_PASS,
+  port: process.env.PSQL_PORT
 });
 
 // GET - all users

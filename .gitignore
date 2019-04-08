@@ -154,5 +154,5 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
-# files without hidden data
-*.SAFE
+# For dotenv module, important environment variables
+*.env
