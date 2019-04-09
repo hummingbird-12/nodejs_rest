@@ -1,44 +1,49 @@
 "use strict";
 
+const express = require('express');
+const router = new express.Router();
+
+// let { tempUserRouter } = require('../app');
+// const loginRouter = require('./login');
+// const usersRouter = require('./users');
+
 const credential_github = {
   client: {
     id: process.env.GITHUB_CLIENT_ID,
     secret: process.env.GITHUB_CLIENT_SECRET
   },
   auth: {
-    tokenHost: {
-      tokenHost: 'https://github.com',
-      tokenPath: '/login/oauth/access_token',
-      authorizePath: '/login/oauth/authorize'
-    }
+    tokenHost: "https://github.com",
+    tokenPath: "/login/oauth/access_token",
+    authorizePath: "/login/oauth/authorize"
   }
-}
+};
 
 const oauth2 = require('simple-oauth2').create(credential_github);
 
-// Authorization oauth2 URI
-const authorizationUri = oauth2.authorizationCode.authorizeURL({
-  redirect_uri: 'http://localhost:3000/callback',
-  scope: '<scope>', // also can be an array of multiple scopes, ex. ['<scope1>, '<scope2>', '...']
-  state: '<state>'
-});
+router.route("/")
+  .get(async function(req, res, next) {
+    const code = req.query.code;
+    const options = {
+      code: code,
+      redirecURI: "localhost:3000/users"
+    };
+    console.log("Authorization code:", code);
 
-// Redirect example using Express (see http://expressjs.com/api.html#res.redirect)
-//res.redirect(authorizationUri);
+    try {
+      const result = await oauth2.authorizationCode.getToken(options);
 
-// Get the access token object (the authorization code is given from the previous step).
-const tokenConfig = {
-  code: '<code>',
-  redirect_uri: 'http://localhost:3000/callback',
-  scope: '<scope>', // also can be an array of multiple scopes, ex. ['<scope1>, '<scope2>', '...']
-};
+      const token = oauth2.accessToken.create(result);
+      console.log("Access token:", token);
 
-/*
-// Save the access token
-try {
-  const result = await oauth2.authorizationCode.getToken(tokenConfig)
-  const accessToken = oauth2.accessToken.create(result);
-} catch (error) {
-  console.log('Access Token Error', error.message);
-}
-*/
+      req.session.user = token;
+
+      // res.redirect('/users');
+      res.redirect("http://localhost:3000/users");
+    } catch(error) {
+      console.error("Error while fetching access token.", error.message);
+      return res.status(500).json('Authentication Failed!');
+    }
+  });
+
+module.exports = router;
