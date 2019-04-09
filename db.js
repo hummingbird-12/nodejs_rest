@@ -10,6 +10,7 @@ const pool = new Pool({
   port: process.env.PSQL_PORT
 });
 
+// attempt connection
 pool.connect((err, client, release) => {
   if (err) {
     return console.error("Error acquiring client.", err.stack);

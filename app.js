@@ -8,8 +8,10 @@ const logger = require('morgan');
 const session = require('express-session');
 require('dotenv').config();
 
+// try connection to DB
 require('./db');
 
+// import Routers
 const loginRouter = require('./routes/login');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/oauth2');
@@ -26,6 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+/* ========== [express-session] ========== */
 // initialize express-session to allow us track the logged-in user across sessions.
 app.use(session({
   key: 'user_key',
@@ -37,9 +40,11 @@ app.use(session({
   }
 }));
 
-// This middleware will check if user's cookie is still saved in browser and user is not set,
+/* ========== [express-session] ========== */
+// check if user's cookie is still saved in browser and user is not set,
 // then automatically log the user out.
-// This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
+// This usually happens when you stop your express server after login,
+// your cookie still remains saved in the browser.
 app.use((req, res, next) => {
   if (req.cookies.user_key && !req.session.user) {
     res.clearCookie('user_sid');
@@ -47,24 +52,28 @@ app.use((req, res, next) => {
   next();
 });
 
-var tempUserRouter = undefined;
-app.use('/login', loginRouter);
-app.use('/redirectOAuth', authRouter);
-app.use('/users', usersRouter);
-
-// middleware function to check for logged-in users
+/* ========== [express-session] ========== */
+// check for logged-in users
 const sessionChecker = (req, res, next) => {
   console.log("Checking session...");
 
   if (req.session.user && req.cookies.user_key) {
+    // user is logged-in
     console.log("Welcome!");
     res.redirect('/users');
   } else {
+    // user needs log-in
     console.log("Please log-in");
     next();
   }
 };
 
+/* ========== link Routers ========== */
+app.use('/login', loginRouter);
+app.use('/redirectOAuth', authRouter);
+app.use('/users', usersRouter);
+
+// check session
 app.use('/', sessionChecker, (req, res) => {
   res.redirect('/login');
 });
@@ -95,7 +104,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = {
-  app,
-  tempUserRouter
-};
+module.exports = app;

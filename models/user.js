@@ -2,6 +2,7 @@
 
 const pool = require('../db');
 
+// checks for valid session for each incoming request
 function checkSession (req, res) {
   if (!req.session.user || !req.cookies.user_key) {
     res.redirect("http://localhost:3000/login");
@@ -10,7 +11,7 @@ function checkSession (req, res) {
   return true;
 }
 
-// GET - all users
+// [GET] all users
 const getUsers = (request, response) => {
   if(checkSession(request, response)) {
     pool.query(
@@ -25,7 +26,7 @@ const getUsers = (request, response) => {
   }
 };
 
-// GET - single user by id
+// [GET] single user by id
 const getUserById = (request, response) => {
   if(checkSession(request, response)) {
     const id = parseInt(request.params.id);
@@ -43,7 +44,7 @@ const getUserById = (request, response) => {
   }
 };
 
-// POST - new user
+// [POST] new user
 const createUser = (request, response) => {
   if(checkSession(request, response)) {
     const {name, email} = request.body;
@@ -62,7 +63,7 @@ const createUser = (request, response) => {
   }
 };
 
-// PUT - update existing user
+// [PUT] update existing user
 const updateUser = (request, response) => {
   if(checkSession(request, response)) {
     const id = parseInt(request.params.id);
@@ -81,7 +82,7 @@ const updateUser = (request, response) => {
   }
 };
 
-// DELETE - remove user
+// [DELETE] remove user
 const deleteUser = (request, response) => {
   if(checkSession(request, response)) {
     const id = parseInt(request.params.id);
